@@ -23,7 +23,6 @@ function isApiKeyValid($apiKey) {
     return $receivedApiKey === $apiKey;
 }
 
-
 function sanitizeString($string) {
     return str_replace(["\r\n", "\n", "\r"], ' ', $string);
 }
@@ -52,6 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     while ($row = fgetcsv($csvStream, 0, ';')) {
         // Sanitize each row
         $row = array_map('sanitizeString', $row);
+
+        // Überprüfen, ob die Anzahl der Spalten in der Zeile mit den Kopfzeilen übereinstimmt
+        if (count($headers) !== count($row)) {
+            // Fehlerbehandlung oder Überspringen der Zeile
+            continue; // Überspringt diese Zeile
+        }
+
         $data[] = array_combine($headers, $row);
     }
     fclose($csvStream);
