@@ -4,8 +4,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-const EXPECTED_API_KEY = 'kbqq6nibSGWmhpsrqnHH';
-
 $config = parse_ini_file('config/config.ini');
 $apiKey = $config['api_key'];
 $temp_dir = $config['temp_path'];
