@@ -54,13 +54,19 @@ function transformValue($value) {
     }
 
     // Versuche, den Wert als Währung oder Zahl zu interpretieren
-    try {
-        return convertCurrencyToNumber($value);
-    } catch (Exception $e) {
-        // Falls der Wert nicht als Währung oder Zahl erkannt wird, wird der Originalwert zurückgegeben
-        return $value;
+    if (is_numeric(str_replace(['$', '€', '£', '¥', ',', '%'], ['', '', '', '', '', ''], $value))) {
+        try {
+            return convertCurrencyToNumber($value);
+        } catch (Exception $e) {
+            // Falls ein Fehler auftritt, wird der Originalwert zurückgegeben
+            return $value;
+        }
     }
+
+    // Für alle anderen Werte, gib den Originalwert zurück
+    return $value;
 }
+
 
 
 function transformJson($data) {

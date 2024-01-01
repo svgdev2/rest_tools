@@ -18,8 +18,23 @@ function isApiKeyValid($apiKey) {
     return $receivedApiKey === $apiKey;
 }
 
-// Funktion zum Erstellen einer Dataverse-kompatiblen Anfrage
-function createDataverseRequest($method, $object, $tableName, $recordId, $changesetBoundary, $dataverseUrl) {
+function mapAttributesToColumns($object, $mapping) {
+    $mappedObject = new stdClass();
+    foreach ($object as $attribute => $value) {
+        if (isset($mapping[$attribute])) {
+            $mappedAttribute = $mapping[$attribute];
+            $mappedObject->$mappedAttribute = $value;
+        } else {
+            $mappedObject->$attribute = $value;
+        }
+    }
+    return $mappedObject;
+}
+
+function createDataverseRequest($method, $object, $tableName, $recordId, $changesetBoundary, $dataverseUrl, $mapping = null) {
+    if ($mapping !== null && ($method === 'POST' || $method === 'PATCH')) {
+        $object = mapAttributesToColumns($object, $mapping);
+    }
     $request = "";
     $request .= "--$changesetBoundary\r\n";
     $request .= "Content-Type: application/http\n";
@@ -44,7 +59,7 @@ function createDataverseRequest($method, $object, $tableName, $recordId, $change
     return $request;
 }
 
-function processDataverseOperations($createArray, $updateArray, $deleteArray, $tableName, $dataverseUrl, $idAttribute) {
+function processDataverseOperations($createArray, $updateArray, $deleteArray, $tableName, $dataverseUrl, $idAttribute, $mapping = null) {
     $batchBoundary = 'batch_' . bin2hex(random_bytes(16));
     $changesetBoundary = 'changeset_' . bin2hex(random_bytes(16));
 
@@ -89,6 +104,7 @@ $createArray = $data['createArray'] ?? [];
 $updateArray = $data['updateArray'] ?? [];
 $deleteArray = $data['deleteArray'] ?? [];
 $idAttribute = $data['idAttribute'] ?? 'id'; // Standardmäßig 'id', falls nicht im JSON angegeben
+$mapping = $data['mapping'] ?? []; // Mapping hinzufügen, Standard ist ein leeres Array
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 
@@ -98,7 +114,7 @@ if (!isApiKeyValid($apiKey)) {
     exit;
 }
 
-$batchRequest = processDataverseOperations($createArray, $updateArray, $deleteArray, $tableName, $dataverseUrl, $idAttribute);
+$batchRequest = processDataverseOperations($createArray, $updateArray, $deleteArray, $tableName, $dataverseUrl, $idAttribute, $mapping);
 
 echo $batchRequest;
 
