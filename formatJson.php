@@ -1,23 +1,5 @@
 <?php
-
-$config = parse_ini_file('config/config.ini');
-$apiKey = $config['api_key'];
-$temp_dir = $config['temp_path'];
-
-function getReceivedApiKey() {
-    $headers = apache_request_headers();
-    $apiKeyHeader = 'X-Api-Key';
-    if (!isset($headers[$apiKeyHeader])) {
-        $apiKeyHeader = 'X-API-Key'; // Alternative Schreibweise
-    }
-
-    return isset($headers[$apiKeyHeader]) ? $headers[$apiKeyHeader] : 'Nicht vorhanden';
-}
-
-function isApiKeyValid($apiKey) {
-    $receivedApiKey = getReceivedApiKey();
-    return $receivedApiKey === $apiKey;
-}
+include 'lib/config_auth.php';
 
 function convertCurrencyToNumber($input) {
     $cleanedInput = str_replace(['$', '€', '£', '¥'], '', $input);
@@ -77,9 +59,10 @@ function convertToType($value, $type) {
     try {
         switch ($type) {
             case 'Boolean':
-                if (strtolower($value) === 'ja') {
+                $valueLower = strtolower($value);
+                if ($valueLower === 'ja' || $valueLower === 'true') {
                     return true;
-                } elseif (strtolower($value) === 'nein') {
+                } elseif ($valueLower === 'nein' || $valueLower === 'false') {
                     return false;
                 } else {
                     throw new Exception("Ungültiger boolescher Wert: $value");
@@ -115,11 +98,6 @@ function transformJson($data, $mapping) {
     } catch (Exception $e) {
         throw new Exception("Fehler bei der JSON-Transformation: " . $e->getMessage());
     }
-}
-
-if (!isApiKeyValid($apiKey)) {
-    echo json_encode(['error' => 'Invalid API key', 'received_key' => getReceivedApiKey()]);
-    exit();
 }
 
 $inputJson = file_get_contents('php://input');
