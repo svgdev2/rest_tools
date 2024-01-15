@@ -1,4 +1,5 @@
 <?php
+include 'lib/config_auth.php';
 
 // Funktion zur Umbenennung der Attribute in einem Objekt
 function renameAttributesInObject($object, $mapping) {
