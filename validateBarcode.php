@@ -7,23 +7,24 @@ header('Content-Type: application/json');
 function validateStandardBarcode($barcode) {
     $length = strlen($barcode);
     if (!in_array($length, [12, 13, 14]) || !preg_match('/^[0-9]+$/', $barcode)) {
-        return false;
+        return ['valid' => false, 'error' => "Ungültige Länge oder ungültige Zeichen für Standard Barcode"];
     }
 
     $sum = 0;
-    $factor = ($length % 2 == 0) ? 3 : 1; // Umkehrung für UPC-A und ITF-14
+    $factor = ($length % 2 == 0) ? 3 : 1;
     for ($i = 0; $i < $length - 1; $i++) {
         $sum += $barcode[$i] * ($factor);
-        $factor = 4 - $factor; // Wechselt zwischen 1 und 3
+        $factor = 4 - $factor;
     }
 
     $check = (10 - ($sum % 10)) % 10;
-    return $check == $barcode[$length - 1];
+    return $check == $barcode[$length - 1] ? ['valid' => true] : ['valid' => false, 'error' => "Ungültige Prüfziffer für Standard Barcode"];
 }
+
 // Funktion zur Validierung von EAN-8
 function validateEAN8($ean8) {
     if (strlen($ean8) != 8 || !preg_match('/^[0-9]{8}$/', $ean8)) {
-        return false;
+        return ['valid' => false, 'error' => "Ungültige Länge oder ungültige Zeichen für EAN-8"];
     }
 
     $sum = 0;
@@ -32,7 +33,7 @@ function validateEAN8($ean8) {
     }
 
     $check = (10 - ($sum % 10)) % 10;
-    return $check == $ean8[7];
+    return $check == $ean8[7] ? ['valid' => true] : ['valid' => false, 'error' => "Ungültige Prüfziffer für EAN-8"];
 }
 
 // Bestimmen Sie den Barcode-Typ und rufen Sie die entsprechende Validierungsfunktion auf
@@ -45,7 +46,7 @@ function validateBarcode($barcode) {
         case 14:
             return validateStandardBarcode($barcode);
         default:
-            return false;
+            return ['valid' => false, 'error' => "Unbekannte Barcode-Länge"];
     }
 }
 
@@ -53,12 +54,12 @@ function validateBarcode($barcode) {
 $barcode = $_GET['barcode'] ?? '';
 
 // Validierung des Barcodes
-if (validateBarcode($barcode)) {
-    http_response_code(200);
-    echo json_encode(["message" => "Valid Barcode"]);
+$validationResult = validateBarcode($barcode);
+if ($validationResult['valid']) {
+    echo json_encode(["error_code" => 200, "message" => "Valid Barcode"]);
 } else {
-    http_response_code(400);
-    echo json_encode(["message" => "Invalid Barcode"]);
+    // HTTP-Statuscode bleibt 200, aber eine eigene Fehlermeldung wird zurückgegeben
+    echo json_encode(["error_code" => 400, "message" => $validationResult['error']]);
 }
 
 ?>

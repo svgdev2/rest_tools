@@ -41,6 +41,7 @@ $text = $input['text'] ?? '';
 $threshold = $input['threshold'] ?? 0;
 $ignoreCaseAndSpaces = $input['ignoreCaseAndSpaces'] ?? false;
 $ignoreList = $input['ignoreList'] ?? []; // Die zu ignorierenden Wortpaare (optional)
+$uniqueList = $input['uniqueList'] ?? true; // Neuer Parameter für eindeutige Liste
 
 $matchingWords = [];
 
@@ -53,7 +54,9 @@ foreach ($wordList as $word) {
     }
 }
 
-$uniqueMatchingWords = array_values(array_unique($matchingWords));
+if ($uniqueList) {
+    $matchingWords = array_values(array_unique($matchingWords));
+}
 
-echo json_encode(["matchingWords" => $uniqueMatchingWords]);
+echo json_encode(["matchingWords" => $matchingWords]);
 ?>

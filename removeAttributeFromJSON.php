@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isApiKeyValid($apiKey)) {
     foreach ($data as $item) {
         // Entferne die angegebenen Attribute aus jedem Objekt im Data-Array
         foreach ($attributesToRemove as $attr) {
+            $attr = str_replace("%at_%", "@", $attr); // Transformiere den Schlüsselnamen zurück
             unset($item[$attr]);
         }
         $result[] = $item;
