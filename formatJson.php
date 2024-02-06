@@ -28,11 +28,20 @@ function transformValue($value) {
 
     if (preg_match("/^(\d{2})\.(\d{2})\.(\d{4})(?: (\d{2}):(\d{2}):(\d{2}))?$/", $value, $matches)) {
         if (isset($matches[4])) {
-            return date("Y-m-d\TH:i:s.0000000", mktime($matches[4], $matches[5], $matches[6], $matches[2], $matches[1], $matches[3]));
+            // Konvertiert das Datum und die Uhrzeit in das ISO 8601 Format
+            return date("c", mktime($matches[4], $matches[5], $matches[6], $matches[2], $matches[1], $matches[3]));
         } else {
-            return date("Y-m-d\TH:i:s.0000000", mktime(0, 0, 0, $matches[2], $matches[1], $matches[3]));
+            // Konvertiert das Datum in das ISO 8601 Format ohne Uhrzeit
+            return date("Y-m-d", mktime(0, 0, 0, $matches[2], $matches[1], $matches[3])) . "T00:00:00+00:00";
         }
     }
+    //if (preg_match("/^(\d{2})\.(\d{2})\.(\d{4})(?: (\d{2}):(\d{2}):(\d{2}))?$/", $value, $matches)) {
+    //    if (isset($matches[4])) {
+    //        return date("Y-m-d\TH:i:s.0000000", mktime($matches[4], $matches[5], $matches[6], $matches[2], $matches[1], $matches[3]));
+    //    } else {
+    //        return date("Y-m-d\TH:i:s.0000000", mktime(0, 0, 0, $matches[2], $matches[1], $matches[3]));
+    //    }
+    //}
 
     if (strpos($value, '%') !== false) {
         $value = str_replace('%', '', $value);
@@ -52,7 +61,8 @@ function transformValue($value) {
 }
 
 function convertToType($value, $type) {
-    if (empty($value)) {
+    // Prüfung auf `null` statt `empty()`, um zu verhindern, dass '0' als leer betrachtet wird.
+    if ($value === null) {
         return null;
     }
 

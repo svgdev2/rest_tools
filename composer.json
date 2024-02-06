@@ -1,0 +1,22 @@
+{
+    "name": "sandravongneisenau/tools",
+    "description": "Werkzeuge für die verschiedenen Prozesse und Anwendungen innerhalb des Unternehmens Sandra von GneisenauSalon GmbH. Darunter sind zu finden ein Excel zi CSV Konvertierungstool. Wird für den Controlling Import verwendet. ein IP Hash Generator, welche für die Webseite und Stape.IO verwendet wird um eine eindeutige lokale ID für Webseitenbesucher zu erzeugen mit dme ggf die GA Tags wieder hergestellt werden können. Und ein Tool zur Erzeugung von Barcodes um Rabattgutscheine als GiveAways zu erzeugen. Nähere Informationen siehe Dokumentation im IT Support auf Sharepoint",
+    "type": "project",
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.29",
+        "picqer/php-barcode-generator": "^2.3",
+        "box/spout": "^3.3",
+        "justinrainbow/json-schema": "^5.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sandravongneisenau\\Tools\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Carl Gneisenau",
+            "email": "carl@sandravongneisenau.de"
+        }
+    ]
+}
