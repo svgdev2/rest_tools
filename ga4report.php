@@ -1,5 +1,5 @@
 <?php
-
+include 'lib/config_auth.php';
 require 'vendor/autoload.php';
 
 use Google\Analytics\Data\V1beta\BetaAnalyticsDataClient;
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 
         // Gruppe B
-        $metricsB = ['bounceRate', 'newUsers', 'averageSessionDuration', 'userConversionRate'];
+        $metricsB = ['bounceRate', 'newUsers', 'averageSessionDuration', 'userConversionRate', 'userConversionRate:contact', 'userConversionRate:maps', 'userConversionRate:newsletter', 'userConversionRate:pinterest_pin'];
         $responseB = runReport($client, $propertyId, $startDate, $endDate, $metricsB);
 
         // Gruppe C mit 'sessionCampaignName'
@@ -89,25 +89,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $responseD = runReport($client, $propertyId, $startDate, $endDate, $metricsD, ['month']);
 
         // Gruppe A mit 'source'
-        $responseAWithChannel = runReport($client, $propertyId, $startDate, $endDate, $metricsA, ['defaultChannelGroup']);
+        //$responseAWithChannel = runReport($client, $propertyId, $startDate, $endDate, $metricsA, ['defaultChannelGroup']);
 
         // Gruppe A mit 'quelle'
-        $responseAWithSource = runReport($client, $propertyId, $startDate, $endDate, $metricsA, ['source']);
+        //$responseAWithSource = runReport($client, $propertyId, $startDate, $endDate, $metricsA, ['source']);
 
 		// Finale Ergebnisse zusammenstellen
 		// Hinzufügen von "source": "all" zu "Analytics - ohne Quellen"
-		$modifiedResponseAWithoutSource = array_map(function ($item) {
-			$item['dimensions'] = ['source' => 'all']; // Setze source auf 'all' für jeden Eintrag
-			return $item;
-		}, $responseAWithoutSource);
+		//$modifiedResponseAWithoutSource = array_map(function ($item) {
+		//	$item['dimensions'] = ['source' => 'all']; // Setze source auf 'all' für jeden Eintrag
+		//	return $item;
+		//}, $responseAWithoutSource);
 
 		// Zusammenfassen von "Analytics - ohne Quellen" und "Analytics nach Quellen" in einem Array
-		$analyticsCombined = array_merge($modifiedResponseAWithoutSource, $responseAWithChannel, $responseAWithSource);
+		//$analyticsCombined = array_merge($modifiedResponseAWithoutSource, $responseAWithChannel, $responseAWithSource);
+		// Zusammenführen von $responseAWithoutSource und $responseB zu $responseMerged
+		if (!empty($responseAWithoutSource) && !empty($responseB)) {
+			// Da beide Arrays genau ein Element enthalten, greifen wir direkt auf das erste Element zu
+			$responseAItem = $responseAWithoutSource[0];
+			$responseBItem = $responseB[0];
 
-		// Neustrukturierung des finalResults-Arrays, um die kombinierten Daten zu enthalten
+			// Zusammenführen der Metrik- und Dimensionswerte beider Antworten
+			// Überprüfen, ob 'dimensions' vorhanden sind und diese gegebenenfalls zusammenführen
+			$mergedDimensions = [];
+			if (isset($responseAItem['dimensions']) && isset($responseBItem['dimensions'])) {
+				$mergedDimensions = array_merge($responseAItem['dimensions'], $responseBItem['dimensions']);
+			} elseif (isset($responseAItem['dimensions'])) {
+				$mergedDimensions = $responseAItem['dimensions'];
+			} elseif (isset($responseBItem['dimensions'])) {
+				$mergedDimensions = $responseBItem['dimensions'];
+			}
+
+			// Zusammenführen der Metriken
+			$mergedMetrics = array_merge($responseAItem, $responseBItem);
+
+			// Entfernen der 'dimensions' aus den Metriken, falls vorhanden, und Hinzufügen der zusammengeführten Dimensionen
+			unset($mergedMetrics['dimensions']);
+			if (!empty($mergedDimensions)) {
+				$mergedMetrics['dimensions'] = $mergedDimensions;
+			}
+
+			$responseMerged = [$mergedMetrics];
+		} else {
+			// Fallback, falls eine der Antworten leer ist
+			$responseMerged = !empty($responseAWithoutSource) ? $responseAWithoutSource : $responseB;
+		}
+
+		// Aktualisieren des finalResults-Arrays, um die zusammengeführten Daten zu enthalten
 		$finalResults = [
-			'Analytics - nach Channel' => $analyticsCombined,
-			'Analytics - sonstige Auswertungen' => $responseB,
+			'Google Analytics' => $responseMerged,
 			'Google Ads' => $responseC,
 			'Google Search Console' => $responseD,
 		];
