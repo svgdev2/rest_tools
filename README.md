@@ -58,7 +58,7 @@ Das Skript gibt ein JSON-Array mit modifizierten Objekten zurück, wobei jedes O
 Bei ungültigem API-Schlüssel gibt das Skript eine 401 Unauthorized Antwort und eine Fehlermeldung Ungültiger API-Schlüssel zurück.
 Stellen Sie sicher, dass die Anfrage korrekt formatiert ist und der API-Schlüssel gültig ist.
 
-#### Installation
+## Installation
 Folgen Sie diesen Schritten, um die Toolsammlung einzurichten:
 
 1. **Download und Einrichtung**:
@@ -76,7 +76,7 @@ Folgen Sie diesen Schritten, um die Toolsammlung einzurichten:
      Diese Datei dient der Konfiguration der Skripte und sollte entsprechend angepasst werden.
    - Der `temp`-Ordner wird für das temporäre Speichern von Dateien verwendet.
 
-#### Nutzung
+## Nutzung
 Die Skripte sind so konzipiert, dass sie HTTP-REST-Anfragen entgegennehmen. Die spezifischen Anforderungen für die Ausführung jedes Skripts, einschließlich der notwendigen Parameter und des Formats der HTTP-Requests, sind in den Kommentaren innerhalb jedes Skripts detailliert beschrieben.
 
 #### Lizenz
