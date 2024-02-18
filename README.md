@@ -49,6 +49,8 @@ Senden Sie eine POST-Anfrage an das Skript mit folgender Struktur:
     }
   ]
 }
+```
+
 new_attribute: Ein Objekt mit Schlüssel-Wert-Paaren, die jedem JSON-Objekt im data Array hinzugefügt werden sollen.
 data: Ein Array von JSON-Objekten, zu denen neue Attribute hinzugefügt werden sollen.
 Antwort
