@@ -14,7 +14,51 @@ Die Toolsammlung umfasst:
 - **`formatJson.php`**: Formatierung von JSON-Dateien für verbesserte Lesbarkeit und Konsistenz.
 - **`hash.php`**: Generiert Hashes für gegebene Daten, nützlich für Sicherheitsüberprüfungen und Datenintegrität.
 
-## Installation
+### addAttributeToJSON PHP-Skript
+
+Das `addAttributeToJSON.php` Skript ermöglicht es Entwicklern und Administratoren, dynamisch neue Attribute zu JSON-Objekten hinzuzufügen, die über eine POST-Anfrage gesendet werden. Es überprüft zuerst die Gültigkeit des API-Schlüssels, liest dann den JSON-Request, fügt die neuen Attribute hinzu und gibt das modifizierte JSON-Objekt zurück.
+
+#### Voraussetzungen
+
+Um dieses Skript zu verwenden, benötigen Sie:
+
+- PHP-Serverumgebung
+- Gültiger API-Schlüssel (definiert in `lib/config_auth.php`)
+
+#### Installation
+
+1. Laden Sie das Skript in das gewünschte Verzeichnis auf Ihrem Server.
+2. Stellen Sie sicher, dass die Datei `lib/config_auth.php` vorhanden ist und einen gültigen API-Schlüsselmechanismus implementiert.
+3. Konfigurieren Sie Ihren Webserver, um PHP-Skripte auszuführen.
+
+#### Verwendung
+
+##### Anfrage
+
+Senden Sie eine POST-Anfrage an das Skript mit folgender Struktur:
+
+```json
+{
+  "new_attribute": {
+    "Schlüssel1": "Wert1",
+    "Schlüssel2": "Wert2"
+  },
+  "data": [
+    {
+      "existingKey": "existingValue"
+    }
+  ]
+}
+new_attribute: Ein Objekt mit Schlüssel-Wert-Paaren, die jedem JSON-Objekt im data Array hinzugefügt werden sollen.
+data: Ein Array von JSON-Objekten, zu denen neue Attribute hinzugefügt werden sollen.
+Antwort
+Das Skript gibt ein JSON-Array mit modifizierten Objekten zurück, wobei jedes Objekt die neuen Attribute enthält.
+
+##### Fehlerbehandlung
+Bei ungültigem API-Schlüssel gibt das Skript eine 401 Unauthorized Antwort und eine Fehlermeldung Ungültiger API-Schlüssel zurück.
+Stellen Sie sicher, dass die Anfrage korrekt formatiert ist und der API-Schlüssel gültig ist.
+
+#### Installation
 Folgen Sie diesen Schritten, um die Toolsammlung einzurichten:
 
 1. **Download und Einrichtung**:
@@ -32,10 +76,10 @@ Folgen Sie diesen Schritten, um die Toolsammlung einzurichten:
      Diese Datei dient der Konfiguration der Skripte und sollte entsprechend angepasst werden.
    - Der `temp`-Ordner wird für das temporäre Speichern von Dateien verwendet.
 
-## Nutzung
+#### Nutzung
 Die Skripte sind so konzipiert, dass sie HTTP-REST-Anfragen entgegennehmen. Die spezifischen Anforderungen für die Ausführung jedes Skripts, einschließlich der notwendigen Parameter und des Formats der HTTP-Requests, sind in den Kommentaren innerhalb jedes Skripts detailliert beschrieben.
 
-## Lizenz
+#### Lizenz
 Diese Toolsammlung ist unter der [MIT-Lizenz](https://opensource.org/licenses/MIT) veröffentlicht. Dies gewährleistet eine breite Nutzung und Verteilung unter geringen Einschränkungen.
 
 ## Mitwirkende und Danksagungen
