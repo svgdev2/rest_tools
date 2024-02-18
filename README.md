@@ -13,6 +13,7 @@ Die Toolsammlung umfasst:
 - **`excel2csv.php`**: Konvertiert Excel-Dateien (XLS, XLSX) in CSV, was die Datenanalyse und -verarbeitung vereinfacht.
 - **`formatJson.php`**: Formatierung von JSON-Dateien für verbesserte Lesbarkeit und Konsistenz.
 - **`hash.php`**: Generiert Hashes für gegebene Daten, nützlich für Sicherheitsüberprüfungen und Datenintegrität.
+- **`addAttributeToJSON`**: 
 
 ### addAttributeToJSON PHP-Skript
 
